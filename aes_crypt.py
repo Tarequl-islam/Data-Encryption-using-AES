@@ -94,8 +94,7 @@ def key_expansion_core(inn, i):
     inn[0], inn[1], inn[2], inn[3] = inn[1], inn[2], inn[3], t
 
     # s_box four bytes
-    inn[0], inn[1], inn[2], inn[3] = sbox[inn[0]
-                                          ], sbox[inn[1]], sbox[inn[2]], sbox[inn[3]]
+    inn[0], inn[1], inn[2], inn[3] = sbox[inn[0]], sbox[inn[1]], sbox[inn[2]], sbox[inn[3]]
 
     # Rcon
     inn[0] ^= Rcon[i]
@@ -103,19 +102,20 @@ def key_expansion_core(inn, i):
     return inn
 
 
-def key_expansion(input_key, expand_key):
+def key_expansion(input_key):
     # the first 16 bytes are the original key
-    for i in range(16):
-        expand_key[i] = input_key[i]
+    expand_key = input_key[:16]
+    expand_key += "0" * 160
 
     bytes_generated = 16
     rcon_iteration = 1
-    temp = "    "
+    
     #
     while(bytes_generated < 176):
         # read 4 bytes for the key
-        for i in range(4):
-            temp[i] = expand_key[i + bytes_generated - 4]
+        temp = []
+        for i in range(4): 
+            temp.append(expand_key[i + bytes_generated - 4])
         # perform the core once for each 16 bytes key
         if(bytes_generated % 16 == 0):
             temp = key_expansion_core(temp, rcon_iteration)
@@ -126,7 +126,7 @@ def key_expansion(input_key, expand_key):
             expand_key[bytes_generated] = expand_key[bytes_generated-16] ^ temp[a]
             bytes_generated += 1
 
-    return
+    return expand_key
 
 
 def sub_byte(state):
@@ -136,54 +136,50 @@ def sub_byte(state):
 
 
 def shift_rows(state):
-    tmp = "                "
-    tmp[0] = state[0]
-    tmp[1] = state[5]
-    tmp[2] = state[10]
-    tmp[3] = state[15]
+    tmp = []
+    tmp.append(state[0])
+    tmp.append(state[5])
+    tmp.append(state[10])
+    tmp.append(state[15])
+    tmp.append(state[4])
+    tmp.append(state[9])
+    tmp.append(state[14])
+    tmp.append(state[3])
+    tmp.append(state[8])
+    tmp.append(state[13])
+    tmp.append(state[2])
+    tmp.append(state[7])
+    tmp.append(state[12])
+    tmp.append(state[1])
+    tmp.append(state[6])
+    tmp.append(state[11])
 
-    tmp[4] = state[4]
-    tmp[5] = state[9]
-    tmp[6] = state[14]
-    tmp[7] = state[3]
-
-    tmp[8] = state[8]
-    tmp[9] = state[13]
-    tmp[10] = state[2]
-    tmp[11] = state[7]
-
-    tmp[12] = state[12]
-    tmp[13] = state[1]
-    tmp[14] = state[6]
-    tmp[15] = state[11]
-    state = tmp
-    return state
+    return tmp
 
 
 def mix_columns(state):
-    tmp = "                "
-    tmp[0] = (mul2[state[0]] ^ mul3[state[1]] ^ state[2] ^ state[3])
-    tmp[1] = (state[0] ^ mul2[state[1]] ^ mul3[state[2]] ^ state[3])
-    tmp[2] = (state[0] ^ state[1] ^ mul2[state[2]] ^ mul3[state[3]])
-    tmp[3] = (mul3[state[0]] ^ state[1] ^ state[2] ^ mul2[state[3]])
+    tmp = []
+    tmp.append(mul2[state[0]] ^ mul3[state[1]] ^ state[2] ^ state[3])
+    tmp.append(state[0] ^ mul2[state[1]] ^ mul3[state[2]] ^ state[3])
+    tmp.append(state[0] ^ state[1] ^ mul2[state[2]] ^ mul3[state[3]])
+    tmp.append(mul3[state[0]] ^ state[1] ^ state[2] ^ mul2[state[3]])
 
-    tmp[4] = (mul2[state[4]] ^ mul3[state[5]] ^ state[6] ^ state[7])
-    tmp[5] = (state[4] ^ mul2[state[5]] ^ mul3[state[6]] ^ state[7])
-    tmp[6] = (state[4] ^ state[5] ^ mul2[state[6]] ^ mul3[state[7]])
-    tmp[7] = (mul3[state[4]] ^ state[5] ^ state[6] ^ mul2[state[7]])
+    tmp.append(mul2[state[4]] ^ mul3[state[5]] ^ state[6] ^ state[7])
+    tmp.append(state[4] ^ mul2[state[5]] ^ mul3[state[6]] ^ state[7])
+    tmp.append(state[4] ^ state[5] ^ mul2[state[6]] ^ mul3[state[7]])
+    tmp.append(mul3[state[4]] ^ state[5] ^ state[6] ^ mul2[state[7]])
 
-    tmp[8] = (mul2[state[8]] ^ mul3[state[9]] ^ state[10] ^ state[11])
-    tmp[9] = (state[8] ^ mul2[state[9]] ^ mul3[state[10]] ^ state[11])
-    tmp[10] = (state[8] ^ state[9] ^ mul2[state[10]] ^ mul3[state[11]])
-    tmp[11] = (mul3[state[8]] ^ state[9] ^ state[10] ^ mul2[state[11]])
+    tmp.append(mul2[state[8]] ^ mul3[state[9]] ^ state[10] ^ state[11])
+    tmp.append(state[8] ^ mul2[state[9]] ^ mul3[state[10]] ^ state[11])
+    tmp.append(state[8] ^ state[9] ^ mul2[state[10]] ^ mul3[state[11]])
+    tmp.append(mul3[state[8]] ^ state[9] ^ state[10] ^ mul2[state[11]])
 
-    tmp[12] = (mul2[state[12]] ^ mul3[state[13]] ^ state[14] ^ state[15])
-    tmp[13] = (state[12] ^ mul2[state[13]] ^ mul3[state[14]] ^ state[15])
-    tmp[14] = (state[12] ^ state[13] ^ mul2[state[14]] ^ mul3[state[15]])
-    tmp[15] = (mul3[state[12]] ^ state[13] ^ state[14] ^ mul2[state[15]])
+    tmp.append(mul2[state[12]] ^ mul3[state[13]] ^ state[14] ^ state[15])
+    tmp.append(state[12] ^ mul2[state[13]] ^ mul3[state[14]] ^ state[15])
+    tmp.append(state[12] ^ state[13] ^ mul2[state[14]] ^ mul3[state[15]])
+    tmp.append(mul3[state[12]] ^ state[13] ^ state[14] ^ mul2[state[15]])
 
-    state = tmp
-    return state
+    return tmp
 
 
 def add_round_key(state, round_key):
@@ -194,38 +190,25 @@ def add_round_key(state, round_key):
 
 
 def aes_encrypt(msg, key):
-    state = msg[0:16]
+    state = []
+    for i in range(16):
+        state.append(ord(msg[i]))
     number_of_rounds = 9
-    expanded_keys = None
-    key_expansion(key, expanded_keys)
-    add_round_key(state, key)
+    expanded_keys = key_expansion(key)
+    state = add_round_key(state, key)
 
     for round in range(number_of_rounds):  # apply round operations
-        sub_byte(state)
-        shift_rows(state)
-        mix_columns()
-        add_round_key(state, expanded_keys+(16*(round+1)))
+        state = sub_byte(state)
+        state = shift_rows(state)
+        state = mix_columns(state)
+        state = add_round_key(state, expanded_keys[(16*(round+1)):])
 
     # final round
-    sub_byte(state)
-    shift_rows(state)
-    add_round_key(state, expanded_keys+160)
-    # copy over the message with the encrypted message
-    for i in range(16):
-        msg[i] = state[i]
+    state = sub_byte(state)
+    state = shift_rows(state)
+    state = add_round_key(state, expanded_keys[160:])
 
-    return msg
-
-
-def print_hex(x):
-    if x / 16 < 10:
-        print((x / 16) + '0', end=" ")
-    if x / 16 >= 10:
-        print((x / 16 - 10) + 'A', end=" ")
-    if x % 16 < 10:
-        print((x % 16) + '0', end=" ")
-    if x % 16 >= 10:
-        print((x % 16 - 10) + 'A', end=" ")
+    return state
 
 
 message = "This text will be encrypted using aes cryptography!"
@@ -236,16 +219,27 @@ key = [1, 2, 3, 4,
 msg_len = len(message)
 padded_msg_len = msg_len
 if (msg_len % 16 != 0):
-    padded_msg_len = (msg_len/16 + 1) * 16
-padded_msg = message
-for i in range(padded_msg_len):
-    if i >= msg_len:
-        padded_msg[i] = '0'
+    padded_msg_len = (int)(msg_len/16 + 1) * 16
+
+#add padding to message
+padded_msg = message+ "0"*(padded_msg_len - msg_len)
+encryted_msg = []
 
 # encrypt padded message
 for i in range(0, padded_msg_len, 16):
-    aes_encrypt(padded_msg+i, key)
+    encryted_msg += aes_encrypt(padded_msg[i:], key)
 
 print("Encrypted message: ", end=" ")
-for i in range(padded_msg):
-    print_hex(padded_msg[i])
+for i in range(padded_msg_len):
+    print(chr(encryted_msg[i]), end="")
+
+print("\nEncrypted message in hex: ", end=" ")
+for i in range(padded_msg_len):
+    y = hex(encryted_msg[i])
+    if(y == "0x00"):
+        y = "00"
+    elif(len(y.lstrip("0x")) <= 1):
+        y = "0"+y.lstrip("0x")
+    else:
+        y = y.lstrip("0x")
+    print(y.upper(), end=" ")
