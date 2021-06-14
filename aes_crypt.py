@@ -92,13 +92,11 @@ def key_expansion_core(inn, i):
     # Rotate left
     t = inn[0]
     inn[0], inn[1], inn[2], inn[3] = inn[1], inn[2], inn[3], t
-
     # s_box four bytes
-    inn[0], inn[1], inn[2], inn[3] = sbox[inn[0]], sbox[inn[1]], sbox[inn[2]], sbox[inn[3]]
-
+    inn[0], inn[1], inn[2], inn[3] = sbox[inn[0]
+                                          ], sbox[inn[1]], sbox[inn[2]], sbox[inn[3]]
     # Rcon
     inn[0] ^= Rcon[i]
-
     return inn
 
 
@@ -106,21 +104,18 @@ def key_expansion(input_key):
     # the first 16 bytes are the original key
     expand_key = input_key[:16]
     expand_key += "0" * 160
-
     bytes_generated = 16
     rcon_iteration = 1
-    
     #
     while(bytes_generated < 176):
         # read 4 bytes for the key
         temp = []
-        for i in range(4): 
+        for i in range(4):
             temp.append(expand_key[i + bytes_generated - 4])
         # perform the core once for each 16 bytes key
         if(bytes_generated % 16 == 0):
             temp = key_expansion_core(temp, rcon_iteration)
             rcon_iteration += 1
-
         # XOR temp with [bytes_generated-16], and store in expanded_keys
         for a in range(4):
             expand_key[bytes_generated] = expand_key[bytes_generated-16] ^ temp[a]
@@ -153,6 +148,23 @@ def shift_rows(state):
     tmp.append(state[1])
     tmp.append(state[6])
     tmp.append(state[11])
+
+    """tmp.append(state[0])
+    tmp.append(state[1])
+    tmp.append(state[2])
+    tmp.append(state[3])
+    tmp.append(state[5])
+    tmp.append(state[6])
+    tmp.append(state[7])
+    tmp.append(state[4])
+    tmp.append(state[10])
+    tmp.append(state[11])
+    tmp.append(state[8])
+    tmp.append(state[9])
+    tmp.append(state[15])
+    tmp.append(state[12])
+    tmp.append(state[13])
+    tmp.append(state[14])"""
 
     return tmp
 
@@ -211,7 +223,7 @@ def aes_encrypt(msg, key):
     return state
 
 
-message = "This text will be encrypted using aes cryptography!"
+message = "This is a message we will encrypt with AES!"
 key = [1, 2, 3, 4,
        5, 6, 7, 8,
        9, 10, 11, 12,
@@ -221,8 +233,8 @@ padded_msg_len = msg_len
 if (msg_len % 16 != 0):
     padded_msg_len = (int)(msg_len/16 + 1) * 16
 
-#add padding to message
-padded_msg = message+ "0"*(padded_msg_len - msg_len)
+# add padding to message
+padded_msg = message + chr(0)*(padded_msg_len - msg_len)
 encryted_msg = []
 
 # encrypt padded message
