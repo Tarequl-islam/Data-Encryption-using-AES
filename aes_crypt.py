@@ -106,7 +106,7 @@ def key_expansion(input_key):
     expand_key += "0" * 160
     bytes_generated = 16
     rcon_iteration = 1
-    #
+    # expanding keys to 11*16 bytes (4*11 words)
     while(bytes_generated < 176):
         # read 4 bytes for the key
         temp = []
@@ -148,23 +148,6 @@ def shift_rows(state):
     tmp.append(state[1])
     tmp.append(state[6])
     tmp.append(state[11])
-
-    """tmp.append(state[0])
-    tmp.append(state[1])
-    tmp.append(state[2])
-    tmp.append(state[3])
-    tmp.append(state[5])
-    tmp.append(state[6])
-    tmp.append(state[7])
-    tmp.append(state[4])
-    tmp.append(state[10])
-    tmp.append(state[11])
-    tmp.append(state[8])
-    tmp.append(state[9])
-    tmp.append(state[15])
-    tmp.append(state[12])
-    tmp.append(state[13])
-    tmp.append(state[14])"""
 
     return tmp
 
