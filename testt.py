@@ -24,6 +24,4 @@ print(msg)"""
 # Irfan
 # Irfan
 # Irfan
-#From Git
-#From Git
-#From Git
+# remove
