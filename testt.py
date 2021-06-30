@@ -20,8 +20,3 @@ print("The incremented character value is : ", end="")
 print(x)
 
 print(msg)"""
-
-# Irfan
-# Irfan
-# Irfan
-# remove
