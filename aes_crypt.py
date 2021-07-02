@@ -129,6 +129,11 @@ def sub_byte(state):
         state[i] = sbox[state[i]]
     return state
 
+def invsub_byte(state):
+    for i in range(16):
+        state[i] = rsbox[state[i]]
+    return state
+
 
 def shift_rows(state):
     tmp = []
