@@ -151,6 +151,29 @@ def shift_rows(state):
 
     return tmp
 
+def invshift_rows(state):
+    tmp = []
+    tmp.append(state[0])
+    tmp.append(state[13])
+    tmp.append(state[10])
+    tmp.append(state[7])
+
+    tmp.append(state[4])
+    tmp.append(state[1])
+    tmp.append(state[14])
+    tmp.append(state[11])
+
+    tmp.append(state[8])
+    tmp.append(state[5])
+    tmp.append(state[2])
+    tmp.append(state[15])
+
+    tmp.append(state[12])
+    tmp.append(state[9])
+    tmp.append(state[6])
+    tmp.append(state[3])
+
+    return tmp
 
 def mix_columns(state):
     tmp = []
