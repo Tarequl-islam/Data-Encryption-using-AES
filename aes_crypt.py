@@ -70,6 +70,7 @@ mul3 = [0x00, 0x03, 0x06, 0x05, 0x0c, 0x0f, 0x0a, 0x09, 0x18, 0x1b, 0x1e, 0x1d, 
         0x3b, 0x38, 0x3d, 0x3e, 0x37, 0x34, 0x31, 0x32, 0x23, 0x20, 0x25, 0x26, 0x2f, 0x2c, 0x29, 0x2a,
         0x0b, 0x08, 0x0d, 0x0e, 0x07, 0x04, 0x01, 0x02, 0x13, 0x10, 0x15, 0x16, 0x1f, 0x1c, 0x19, 0x1a]
 
+
 Rcon = [0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a,
         0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39,
         0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a,
@@ -93,8 +94,7 @@ def key_expansion_core(inn, i):
     t = inn[0]
     inn[0], inn[1], inn[2], inn[3] = inn[1], inn[2], inn[3], t
     # s_box four bytes
-    inn[0], inn[1], inn[2], inn[3] = sbox[inn[0]
-                                          ], sbox[inn[1]], sbox[inn[2]], sbox[inn[3]]
+    inn[0], inn[1], inn[2], inn[3] = sbox[inn[0]], sbox[inn[1]], sbox[inn[2]], sbox[inn[3]]
     # Rcon
     inn[0] ^= Rcon[i]
     return inn
@@ -201,10 +201,35 @@ def mix_columns(state):
     tmp.append(state[12] ^ mul2[state[13]] ^ mul3[state[14]] ^ state[15])
     tmp.append(state[12] ^ state[13] ^ mul2[state[14]] ^ mul3[state[15]])
     tmp.append(mul3[state[12]] ^ state[13] ^ state[14] ^ mul2[state[15]])
-
     return tmp
 
+
+def xtime(x):
+    return ((x<<1)) ^ (((x>>7) & 1) * 0x1b)
+
+def Multiply(x,  y):
+    return (((y & 1) * x) ^ 
+        ((y>>1 & 1) * xtime(x)) ^
+        ((y>>2 & 1) * xtime(xtime(x))) ^
+        ((y>>3 & 1) * xtime(xtime(xtime(x)))) ^
+        ((y>>4 & 1) * xtime(xtime(xtime(xtime(x))))))
+
 def inv_mix_columns(state):
+    tmp = []
+    for i in range(0, 16, 4):
+        a = state[i+0]
+        b = state[i+1]
+        c = state[i+2]
+        d = state[i+3]
+
+        tmp.append(Multiply(a, 0x0e) ^ Multiply(b, 0x0b) ^ Multiply(c, 0x0d) ^ Multiply(d, 0x09))
+        tmp.append(Multiply(a, 0x09) ^ Multiply(b, 0x0e) ^ Multiply(c, 0x0b) ^ Multiply(d, 0x0d))
+        tmp.append(Multiply(a, 0x0d) ^ Multiply(b, 0x09) ^ Multiply(c, 0x0e) ^ Multiply(d, 0x0b))
+        tmp.append(Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e))
+    return tmp
+
+
+def invmixcolumns(state):
     tmp = []
     tmp.append(mul2[state[0]] ^ mul3[state[1]] ^ state[2] ^ state[3])
     tmp.append(state[0] ^ mul2[state[1]] ^ mul3[state[2]] ^ state[3])
