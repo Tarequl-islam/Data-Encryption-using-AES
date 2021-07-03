@@ -129,7 +129,7 @@ def sub_byte(state):
         state[i] = sbox[state[i]]
     return state
 
-def invsub_byte(state):
+def inv_sub_byte(state):
     for i in range(16):
         state[i] = rsbox[state[i]]
     return state
@@ -156,7 +156,7 @@ def shift_rows(state):
 
     return tmp
 
-def invshift_rows(state):
+def inv_shift_rows(state):
     tmp = []
     tmp.append(state[0])
     tmp.append(state[13])
@@ -204,7 +204,7 @@ def mix_columns(state):
 
     return tmp
 
-def invmix_columns(state):
+def inv_mix_columns(state):
     tmp = []
     tmp.append(mul2[state[0]] ^ mul3[state[1]] ^ state[2] ^ state[3])
     tmp.append(state[0] ^ mul2[state[1]] ^ mul3[state[2]] ^ state[3])
@@ -266,14 +266,14 @@ def aes_decrypt(msg, key):
     state = add_round_key(state, key)
 
     for round in range(number_of_rounds):  # apply round operations
-        state = invshift_rows(state)
-        state = invsub_byte(state)
+        state = inv_shift_rows(state)
+        state = inv_sub_byte(state)
         state = add_round_key(state, expanded_keys[(16*(round+1)):])
-        state = invmix_columns(state)
+        state = inv_mix_columns(state)
 
     # final round
-    state = invshift_rows(state)
-    state = invsub_byte(state)
+    state = inv_shift_rows(state)
+    state = inv_sub_byte(state)
     state = add_round_key(state, expanded_keys[160:])
 
     return state
@@ -323,4 +323,4 @@ for i in range(0, padded_msg_len, 16):
 
 print("\nDecrypted message: ", end=" ")
 for i in range(padded_msg_len):
-    print(chr(decryted_msg[i]), end="")
+    print(chr(decryted_msg[i]), end=" ")
