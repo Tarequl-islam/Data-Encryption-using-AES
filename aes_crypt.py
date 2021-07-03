@@ -129,6 +129,11 @@ def sub_byte(state):
         state[i] = sbox[state[i]]
     return state
 
+def invsub_byte(state):
+    for i in range(16):
+        state[i] = rsbox[state[i]]
+    return state
+
 
 def shift_rows(state):
     tmp = []
@@ -151,8 +156,55 @@ def shift_rows(state):
 
     return tmp
 
+def invshift_rows(state):
+    tmp = []
+    tmp.append(state[0])
+    tmp.append(state[13])
+    tmp.append(state[10])
+    tmp.append(state[7])
+
+    tmp.append(state[4])
+    tmp.append(state[1])
+    tmp.append(state[14])
+    tmp.append(state[11])
+
+    tmp.append(state[8])
+    tmp.append(state[5])
+    tmp.append(state[2])
+    tmp.append(state[15])
+
+    tmp.append(state[12])
+    tmp.append(state[9])
+    tmp.append(state[6])
+    tmp.append(state[3])
+
+    return tmp
 
 def mix_columns(state):
+    tmp = []
+    tmp.append(mul2[state[0]] ^ mul3[state[1]] ^ state[2] ^ state[3])
+    tmp.append(state[0] ^ mul2[state[1]] ^ mul3[state[2]] ^ state[3])
+    tmp.append(state[0] ^ state[1] ^ mul2[state[2]] ^ mul3[state[3]])
+    tmp.append(mul3[state[0]] ^ state[1] ^ state[2] ^ mul2[state[3]])
+
+    tmp.append(mul2[state[4]] ^ mul3[state[5]] ^ state[6] ^ state[7])
+    tmp.append(state[4] ^ mul2[state[5]] ^ mul3[state[6]] ^ state[7])
+    tmp.append(state[4] ^ state[5] ^ mul2[state[6]] ^ mul3[state[7]])
+    tmp.append(mul3[state[4]] ^ state[5] ^ state[6] ^ mul2[state[7]])
+
+    tmp.append(mul2[state[8]] ^ mul3[state[9]] ^ state[10] ^ state[11])
+    tmp.append(state[8] ^ mul2[state[9]] ^ mul3[state[10]] ^ state[11])
+    tmp.append(state[8] ^ state[9] ^ mul2[state[10]] ^ mul3[state[11]])
+    tmp.append(mul3[state[8]] ^ state[9] ^ state[10] ^ mul2[state[11]])
+
+    tmp.append(mul2[state[12]] ^ mul3[state[13]] ^ state[14] ^ state[15])
+    tmp.append(state[12] ^ mul2[state[13]] ^ mul3[state[14]] ^ state[15])
+    tmp.append(state[12] ^ state[13] ^ mul2[state[14]] ^ mul3[state[15]])
+    tmp.append(mul3[state[12]] ^ state[13] ^ state[14] ^ mul2[state[15]])
+
+    return tmp
+
+def invmix_columns(state):
     tmp = []
     tmp.append(mul2[state[0]] ^ mul3[state[1]] ^ state[2] ^ state[3])
     tmp.append(state[0] ^ mul2[state[1]] ^ mul3[state[2]] ^ state[3])
@@ -205,6 +257,27 @@ def aes_encrypt(msg, key):
 
     return state
 
+def aes_decrypt(msg, key):
+    state = []
+    for i in range(16):
+        state.append(ord(msg[i]))
+    number_of_rounds = 9
+    expanded_keys = key_expansion(key)
+    state = add_round_key(state, key)
+
+    for round in range(number_of_rounds):  # apply round operations
+        state = invshift_rows(state)
+        state = invsub_byte(state)
+        state = add_round_key(state, expanded_keys[(16*(round+1)):])
+        state = invmix_columns(state)
+
+    # final round
+    state = invshift_rows(state)
+    state = invsub_byte(state)
+    state = add_round_key(state, expanded_keys[160:])
+
+    return state
+
 
 message = "This is a message we will encrypt with AES!"
 key = [1, 2, 3, 4,
@@ -219,6 +292,7 @@ if (msg_len % 16 != 0):
 # add padding to message
 padded_msg = message + chr(0)*(padded_msg_len - msg_len)
 encryted_msg = []
+decryted_msg = []
 
 # encrypt padded message
 for i in range(0, padded_msg_len, 16):
@@ -228,13 +302,21 @@ print("Encrypted message: ", end=" ")
 for i in range(padded_msg_len):
     print(chr(encryted_msg[i]), end="")
 
-print("\nEncrypted message in hex: ", end=" ")
-for i in range(padded_msg_len):
-    y = hex(encryted_msg[i])
-    if(y == "0x00"):
-        y = "00"
-    elif(len(y.lstrip("0x")) <= 1):
-        y = "0"+y.lstrip("0x")
-    else:
-        y = y.lstrip("0x")
-    print(y.upper(), end=" ")
+# print("\nEncrypted message in hex: ", end=" ")
+# for i in range(padded_msg_len):
+#     y = hex(encryted_msg[i])
+#     if(y == "0x00"):
+#         y = "00"
+#     elif(len(y.lstrip("0x")) <= 1):
+#         y = "0"+y.lstrip("0x")
+#     else:
+#         y = y.lstrip("0x")
+#     print(y.upper(), end=" ")
+
+# decrypt padded message
+# for i in range(0, padded_msg_len, 16):
+#     decryted_msg += aes_decrypt(encryted_msg[i:], key)
+
+# print("Decrypted message: ", end=" ")
+# for i in range(padded_msg_len):
+#     print(chr(decryted_msg[i]), end="")
