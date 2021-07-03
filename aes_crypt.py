@@ -263,9 +263,9 @@ def aes_decrypt(msg, key):
         state.append(msg[i])
     number_of_rounds = 9
     expanded_keys = key_expansion(key)
-    state = add_round_key(state, key)
+    state = add_round_key(state, expanded_keys[160:])
 
-    for round in range(number_of_rounds):  # apply round operations
+    for round in range(number_of_rounds-1, -1, -1):  # apply round operations
         state = inv_shift_rows(state)
         state = inv_sub_byte(state)
         state = add_round_key(state, expanded_keys[(16*(round+1)):])
@@ -274,7 +274,7 @@ def aes_decrypt(msg, key):
     # final round
     state = inv_shift_rows(state)
     state = inv_sub_byte(state)
-    state = add_round_key(state, expanded_keys[160:])
+    state = add_round_key(state, key)
 
     return state
 
