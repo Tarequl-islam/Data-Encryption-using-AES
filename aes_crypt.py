@@ -260,7 +260,7 @@ def aes_encrypt(msg, key):
 def aes_decrypt(msg, key):
     state = []
     for i in range(16):
-        state.append(ord(msg[i]))
+        state.append(msg[i])
     number_of_rounds = 9
     expanded_keys = key_expansion(key)
     state = add_round_key(state, key)
@@ -278,6 +278,8 @@ def aes_decrypt(msg, key):
 
     return state
 
+
+# Main Function starts here. 
 
 message = "This is a message we will encrypt with AES!"
 key = [1, 2, 3, 4,
@@ -298,25 +300,27 @@ decryted_msg = []
 for i in range(0, padded_msg_len, 16):
     encryted_msg += aes_encrypt(padded_msg[i:], key)
 
+# Print Encrypted message
 print("Encrypted message: ", end=" ")
 for i in range(padded_msg_len):
     print(chr(encryted_msg[i]), end="")
 
-# print("\nEncrypted message in hex: ", end=" ")
-# for i in range(padded_msg_len):
-#     y = hex(encryted_msg[i])
-#     if(y == "0x00"):
-#         y = "00"
-#     elif(len(y.lstrip("0x")) <= 1):
-#         y = "0"+y.lstrip("0x")
-#     else:
-#         y = y.lstrip("0x")
-#     print(y.upper(), end=" ")
+print("\nEncrypted message in hex: ", end=" ")
+for i in range(padded_msg_len):
+    y = hex(encryted_msg[i])
+    if(y == "0x00"):
+        y = "00"
+    elif(len(y.lstrip("0x")) <= 1):
+        y = "0"+y.lstrip("0x")
+    else:
+        y = y.lstrip("0x")
+    print(y.upper(), end=" ")
 
-# decrypt padded message
-# for i in range(0, padded_msg_len, 16):
-#     decryted_msg += aes_decrypt(encryted_msg[i:], key)
 
-# print("Decrypted message: ", end=" ")
-# for i in range(padded_msg_len):
-#     print(chr(decryted_msg[i]), end="")
+# Decrypt Encrypted message
+for i in range(0, padded_msg_len, 16):
+    decryted_msg += aes_decrypt(encryted_msg[i:], key)
+
+print("\nDecrypted message: ", end=" ")
+for i in range(padded_msg_len):
+    print(chr(decryted_msg[i]), end="")
