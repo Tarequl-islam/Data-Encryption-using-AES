@@ -339,6 +339,8 @@ def aes_decrypt(msg, key):
 # Main Function starts here.
 
 message = "This is a message we will encrypt with AES!"
+print("\n\nOriginal message: ", message)
+
 key = [1, 2, 3, 4,
        5, 6, 7, 8,
        9, 10, 11, 12,
@@ -353,15 +355,16 @@ if (msg_len % 16 != 0):
 padded_msg = message + chr(0)*(padded_msg_len - msg_len)
 
 
-encryted_msg = []
-decryted_msg = []
+# ---------------            Encryption Algorithm             -----------------------
+# ---------------                Starts here                  -----------------------
 
+encryted_msg = []
 # encrypt padded message
 for i in range(0, padded_msg_len, 16):
     encryted_msg += aes_encrypt(padded_msg[i:], key)
 
 # Print Encrypted message
-print("Encrypted message: ", end=" ")
+print("\nEncrypted message: ", end=" ")
 for i in range(padded_msg_len):
     print(chr(encryted_msg[i]), end="")
 
@@ -377,10 +380,17 @@ for i in range(padded_msg_len):
     print(y.upper(), end=" ")
 print()
 
+
+#--------------------       Decryption Algorithm         ------------------------
+#--------------------            Starts here             ------------------------
+
+decryted_msg = []
+
 # Decrypt Encrypted message
 for i in range(0, padded_msg_len, 16):
     decryted_msg += aes_decrypt(encryted_msg[i:], key)
 
 print("\nDecrypted message: ", end=" ")
-for i in range(padded_msg_len):
+for i in range(msg_len):
     print(chr(decryted_msg[i]), end="")
+print("\n\n")
