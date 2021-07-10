@@ -415,7 +415,6 @@ def image_encryption():
     fin.close()
     image = bytearray(image)
     img_len = len(image)
-    padded_img = []
     padded_img_len = img_len
     if (img_len % 16 != 0):
         padded_img_len = (int)(img_len/16 + 1) * 16
@@ -436,8 +435,50 @@ def image_encryption():
     return
 
 
+def image_decryption():
+    path = "encrypted_image.jpg"
+    key = key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    #key = [int(k) for k in input().split()]
+    # open file for reading purpose
+    fin = open(path, 'rb')
+    # storing image data in variable "image"
+    image = fin.read()
+    fin.close()
+    image = bytearray(image)
+    img_len = len(image)
+    padded_img_len = img_len
+    if (img_len % 16 != 0):
+        padded_img_len = (int)(img_len/16 + 1) * 16
+    # add padding to byte array
+    for i in range(padded_img_len - img_len):
+        image += bytes([0])
+
+    decrypted_img = []
+    for i in range(0, padded_img_len, 16):
+        decrypted_img += aes_decrypt(image[i:], key)
+
+    i = padded_img_len-1
+    j = 0
+    while(decrypted_img[i]== 0):
+        i-=1
+        j+=1
+
+    decrypted_img = decrypted_img[:padded_img_len-j]
+    decrypted_img = bytearray(decrypted_img)
+    # opening file for writting purpose
+    fin = open("decrypted_image.jpg", 'wb')
+    # writing encrypted data in image
+    fin.write(decrypted_img)
+    fin.close()
+    print('Decryption Done...')
+    return
+
+
+
+
 # ---------------               Main Function                 ----------------------- 
 # ---------------                Starts here                  ----------------------- 
+
 
 number = input("\nEnter 0 for message Cryptography, 1 for image Cryptography: ")
 if number == '0':
@@ -452,10 +493,8 @@ elif number == '1':
     if number2 == '2':
         image_encryption()
     elif number2 == '3':
-        ok = 3
+        image_decryption()
 
-#message = "This is a message we will encrypt with AES!"
-#key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
-# 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
-#      ¶K'»▬§¦õ2↑lÅúµ^\Tê▲=ã☻u"vRÕ{ÕBº☼hPÍýY¸ë♫Ñ
-# 
+#     This is a message we will encrypt with AES!
+#      1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+#
