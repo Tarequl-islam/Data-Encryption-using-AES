@@ -310,14 +310,13 @@ def aes_encrypt(msg, key):
     state = sub_byte(state)
     state = shift_rows(state)
     state = add_round_key(state, expanded_keys[160:])
-
     return state
 
 
 def aes_decrypt(msg, key):
     state = []
     for i in range(16):
-        state.append(msg[i])
+        state.append((msg[i]))
     number_of_rounds = 9
     expanded_keys = key_expansion(key)
     state = add_round_key(state, expanded_keys[160:])
@@ -332,65 +331,91 @@ def aes_decrypt(msg, key):
     state = inv_shift_rows(state)
     state = inv_sub_byte(state)
     state = add_round_key(state, key)
-
     return state
 
+def message_encryption():
+    message = input("\n\nEnter message for Encryption: ")
+    #print("\nEnter key: ")
+    key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    #key = [int(k) for k in input().split()]
+    msg_len = len(message)
+    padded_msg_len = msg_len
+    if (msg_len % 16 != 0):
+        padded_msg_len = (int)(msg_len/16 + 1) * 16
 
-# Main Function starts here.
+    # add padding to message
+    padded_msg = message + chr(0)*(padded_msg_len - msg_len)
+    encryted_msg = []
+    # encrypt padded message
+    for i in range(0, padded_msg_len, 16):
+        encryted_msg += aes_encrypt(padded_msg[i:], key)
 
-message = "This is a message we will encrypt with AES!"
-print("\n\nOriginal message: ", message)
+    msg = ""
+    # Print Encrypted message
+    print("\nEncrypted message in integer array: ", end=" ")
+    for i in range(padded_msg_len):
+        print((encryted_msg[i]), end=" ")
+        msg+= chr(encryted_msg[i])
 
-key = [1, 2, 3, 4,
-       5, 6, 7, 8,
-       9, 10, 11, 12,
-       13, 14, 15, 16]
+    print("\nEncrypted message in text: ", msg)
+    print("\nEncrypted message in hex: ", end=" ")
+    for i in range(padded_msg_len):
+        y = hex(encryted_msg[i])
+        if(y == "0x00"):
+            y = "00"
+        elif(len(y.lstrip("0x")) <= 1):
+            y = "0"+y.lstrip("0x")
+        else:
+            y = y.lstrip("0x")
+        print(y.upper(), end=" ")
+    print()
+    return
 
-msg_len = len(message)
-padded_msg_len = msg_len
-if (msg_len % 16 != 0):
-    padded_msg_len = (int)(msg_len/16 + 1) * 16
 
-# add padding to message
-padded_msg = message + chr(0)*(padded_msg_len - msg_len)
+def message_decryption():
+    print("\n\nEnter message for Decryption: ")
+    message = [int(k) for k in input().split()]
+    #print("\nEnter key: ")
+    key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    #key = [int(k) for k in input().split()]
+    msg_len = len(message)
+    padded_msg_len = msg_len
+    if (msg_len % 16 != 0):
+        padded_msg_len = (int)(msg_len/16 + 1) * 16
+
+    padded_msg = message
+    # add padding to message
+    for i in range(padded_msg_len - msg_len):
+        padded_msg += 0
+    #padded_msg = message + chr(0)*(padded_msg_len - msg_len)
+    decryted_msg = []
+
+    # Decrypt Encrypted message
+    for i in range(0, padded_msg_len, 16):
+        decryted_msg += aes_decrypt(padded_msg[i:], key)
+
+    print("\nDecrypted message: ", end=" ")
+    for i in range(msg_len):
+        print(chr(decryted_msg[i]), end="")
+    print("\n\n")
+    pass
 
 
-# ---------------            Encryption Algorithm             -----------------------
+# ---------------               Main Function                 -----------------------
 # ---------------                Starts here                  -----------------------
 
-encryted_msg = []
-# encrypt padded message
-for i in range(0, padded_msg_len, 16):
-    encryted_msg += aes_encrypt(padded_msg[i:], key)
+number = input("\nEnter 0 for message Cryptography, 1 for image Cryptography: ")
+if number == '0':
+    number2 = input("\nEnter 2 for message Encryption, 3 for Decryption: ") 
+    if number2 == '2':
+        message_encryption()
+    elif number2 == '3':
+        message_decryption()
 
-# Print Encrypted message
-print("\nEncrypted message: ", end=" ")
-for i in range(padded_msg_len):
-    print(chr(encryted_msg[i]), end="")
-
-print("\nEncrypted message in hex: ", end=" ")
-for i in range(padded_msg_len):
-    y = hex(encryted_msg[i])
-    if(y == "0x00"):
-        y = "00"
-    elif(len(y.lstrip("0x")) <= 1):
-        y = "0"+y.lstrip("0x")
-    else:
-        y = y.lstrip("0x")
-    print(y.upper(), end=" ")
-print()
-
-
-#--------------------       Decryption Algorithm         ------------------------
-#--------------------            Starts here             ------------------------
-
-decryted_msg = []
-
-# Decrypt Encrypted message
-for i in range(0, padded_msg_len, 16):
-    decryted_msg += aes_decrypt(encryted_msg[i:], key)
-
-print("\nDecrypted message: ", end=" ")
-for i in range(msg_len):
-    print(chr(decryted_msg[i]), end="")
-print("\n\n")
+elif number == '1':
+    ok = 1
+    print("\nImage cryptography is under development")
+#message = "This is a message we will encrypt with AES!"
+#key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+# 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+#      ¶K'»▬§¦õ2↑lÅúµ^\Tê▲=ã☻u"vRÕ{ÕBº☼hPÍýY¸ë♫Ñ
