@@ -27,16 +27,13 @@ try:
     key = int(input('Enter Key for encryption of Image : '))
     print('The path of file : ', path)
     print('Key for encryption : ', key)
-
-    # open file for reading purpose
+    # open file for reading purpose 
     fin = open(path, 'rb')
-
     # storing image data in variable "image" 
     image = fin.read()
     fin.close()
-
     # converting image into byte array to
-    # perform encryption easily on numeric data
+    # perform encryption easily on numeric data 
     image = bytearray(image)
     mn = 1000
     mx = 0
@@ -47,7 +44,6 @@ try:
     print()
     # opening file for writting purpose
     fin = open(path, 'wb')
-
     # writing encrypted data in image
     fin.write(image)
     fin.close()

@@ -295,7 +295,7 @@ def add_round_key(state, round_key):
 def aes_encrypt(msg, key):
     state = []
     for i in range(16):
-        state.append(ord(msg[i]))
+        state.append((msg[i]))              #   ord()  deleted
     number_of_rounds = 9
     expanded_keys = key_expansion(key)
     state = add_round_key(state, key)
@@ -348,7 +348,10 @@ def message_encryption():
     encryted_msg = []
     # encrypt padded message
     for i in range(0, padded_msg_len, 16):
-        encryted_msg += aes_encrypt(padded_msg[i:], key)
+        state = []
+        for j in range(16):
+            state[j] = ord(padded_msg[i+j])
+        encryted_msg += aes_encrypt(state, key)
 
     msg = ""
     # Print Encrypted message
@@ -359,7 +362,7 @@ def message_encryption():
 
     print("\nEncrypted message in text: ", msg)
     print("\nEncrypted message in hex: ", end=" ")
-    for i in range(padded_msg_len):
+    for i in range(padded_msg_len): 
         y = hex(encryted_msg[i])
         if(y == "0x00"):
             y = "00"
@@ -367,7 +370,7 @@ def message_encryption():
             y = "0"+y.lstrip("0x")
         else:
             y = y.lstrip("0x")
-        print(y.upper(), end=" ")
+        print(y.upper(), end=" ") 
     print()
     return
 
@@ -398,11 +401,43 @@ def message_decryption():
     for i in range(msg_len):
         print(chr(decryted_msg[i]), end="")
     print("\n\n")
-    pass
+    return
 
 
-# ---------------               Main Function                 -----------------------
-# ---------------                Starts here                  -----------------------
+def image_encryption():
+    path = "pepper.jpg"
+    key = key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    #key = [int(k) for k in input().split()]
+    # open file for reading purpose
+    fin = open(path, 'rb')
+    # storing image data in variable "image"
+    image = fin.read()
+    fin.close()
+    image = bytearray(image)
+    img_len = len(image)
+    padded_img = []
+    padded_img_len = img_len
+    if (img_len % 16 != 0):
+        padded_img_len = (int)(img_len/16 + 1) * 16
+    # add padding to byte array
+    for i in range(padded_img_len - img_len):
+        image += bytes([0])
+
+    encrypted_img = []
+    for i in range(0, padded_img_len, 16):
+        encrypted_img += aes_encrypt(image[i:], key)
+    encrypted_img = bytearray(encrypted_img)
+    # opening file for writting purpose
+    fin = open("encrypted_image.jpg", 'wb')
+    # writing encrypted data in image
+    fin.write(encrypted_img)
+    fin.close()
+    print('Encryption Done...')
+    return
+
+
+# ---------------               Main Function                 ----------------------- 
+# ---------------                Starts here                  ----------------------- 
 
 number = input("\nEnter 0 for message Cryptography, 1 for image Cryptography: ")
 if number == '0':
@@ -413,9 +448,14 @@ if number == '0':
         message_decryption()
 
 elif number == '1':
-    ok = 1
-    print("\nImage cryptography is under development")
+    number2 = input("\nEnter 2 for image Encryption, 3 for Decryption: ")
+    if number2 == '2':
+        image_encryption()
+    elif number2 == '3':
+        ok = 3
+
 #message = "This is a message we will encrypt with AES!"
 #key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 # 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
 #      ¶K'»▬§¦õ2↑lÅúµ^\Tê▲=ã☻u"vRÕ{ÕBº☼hPÍýY¸ë♫Ñ
+# 
