@@ -261,30 +261,6 @@ def inv_mix_columns(state):
     return tmp
 
 
-# def xtime(x):
-#     return ((x<<1) ^ (((x>>7) & 1) * 0x1b))
-
-# def Multiply(x,  y):
-#     return (((y & 1) * x) ^
-#         ((y>>1 & 1) * xtime(x)) ^
-#         ((y>>2 & 1) * xtime(xtime(x))) ^
-#         ((y>>3 & 1) * xtime(xtime(xtime(x)))) ^
-#         ((y>>4 & 1) * xtime(xtime(xtime(xtime(x))))))
-
-# def inv_mix_columns(state):
-#     tmp = []
-#     for i in range(0, 16, 4):
-#         a = state[i+0]
-#         b = state[i+1]
-#         c = state[i+2]
-#         d = state[i+3]
-#         tmp.append(Multiply(a, 0x0e) ^ Multiply(b, 0x0b) ^ Multiply(c, 0x0d) ^ Multiply(d, 0x09))
-#         tmp.append(Multiply(a, 0x09) ^ Multiply(b, 0x0e) ^ Multiply(c, 0x0b) ^ Multiply(d, 0x0d))
-#         tmp.append(Multiply(a, 0x0d) ^ Multiply(b, 0x09) ^ Multiply(c, 0x0e) ^ Multiply(d, 0x0b))
-#         tmp.append(Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e))
-#     return tmp
-
-
 def add_round_key(state, round_key):
     for i in range(16):
         state[i] ^= round_key[i]
@@ -335,9 +311,9 @@ def aes_decrypt(msg, key):
 
 def message_encryption():
     message = input("\n\nEnter message for Encryption: ")
-    #print("\nEnter key: ")
-    key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
-    #key = [int(k) for k in input().split()]
+    print("\nEnter key: ")
+    #key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    key = [int(k) for k in input().split()]
     msg_len = len(message)
     padded_msg_len = msg_len
     if (msg_len % 16 != 0):
@@ -350,7 +326,7 @@ def message_encryption():
     for i in range(0, padded_msg_len, 16):
         state = []
         for j in range(16):
-            state[j] = ord(padded_msg[i+j])
+            state.append(ord(padded_msg[i+j]))
         encryted_msg += aes_encrypt(state, key)
 
     msg = ""
@@ -378,9 +354,9 @@ def message_encryption():
 def message_decryption():
     print("\n\nEnter message for Decryption: ")
     message = [int(k) for k in input().split()]
-    #print("\nEnter key: ")
-    key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
-    #key = [int(k) for k in input().split()]
+    print("\nEnter key: ")
+    #key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    key = [int(k) for k in input().split()]
     msg_len = len(message)
     padded_msg_len = msg_len
     if (msg_len % 16 != 0):
@@ -406,8 +382,9 @@ def message_decryption():
 
 def image_encryption():
     path = "pepper.jpg"
-    key = key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
-    #key = [int(k) for k in input().split()]
+    #key = key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    print("\nEnter key: ")
+    key = [int(k) for k in input().split()]
     # open file for reading purpose
     fin = open(path, 'rb')
     # storing image data in variable "image"
@@ -437,8 +414,9 @@ def image_encryption():
 
 def image_decryption():
     path = "encrypted_image.jpg"
-    key = key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
-    #key = [int(k) for k in input().split()]
+    #key = key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    print("\nEnter key: ")
+    key = [int(k) for k in input().split()]
     # open file for reading purpose
     fin = open(path, 'rb')
     # storing image data in variable "image"
@@ -497,4 +475,5 @@ elif number == '1':
 
 #     This is a message we will encrypt with AES!
 #      1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
-#
+#  182 75 39 187 22 21 166 245 50 24 108 197 250 148 181 94 92 84 234 27 223 151 30 61 227 27 252 2 117 34 118 82 213 123 213 66 186 15 104 80 205 253 89 184 235 14 131 209
+
