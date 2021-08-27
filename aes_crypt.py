@@ -381,7 +381,7 @@ def message_decryption():
 
 
 def image_encryption():
-    path = "pepper.jpg"
+    path = "renting.amr"
     #key = key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
     print("\nEnter key: ")
     key = [int(k) for k in input().split()]
@@ -404,7 +404,8 @@ def image_encryption():
         encrypted_img += aes_encrypt(image[i:], key)
     encrypted_img = bytearray(encrypted_img)
     # opening file for writting purpose
-    fin = open("encrypted_image.jpg", 'wb')
+    out_path = "encrypted_"+path
+    fin = open(out_path, 'wb')
     # writing encrypted data in image
     fin.write(encrypted_img)
     fin.close()
@@ -413,7 +414,7 @@ def image_encryption():
 
 
 def image_decryption():
-    path = "encrypted_image.jpg"
+    path = "encrypted_renting.amr"
     #key = key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
     print("\nEnter key: ")
     key = [int(k) for k in input().split()]
@@ -444,7 +445,8 @@ def image_decryption():
     decrypted_img = decrypted_img[:padded_img_len-j]
     decrypted_img = bytearray(decrypted_img)
     # opening file for writting purpose
-    fin = open("decrypted_image.jpg", 'wb')
+    out_path = "decrypted_"+path
+    fin = open(out_path, 'wb')
     # writing encrypted data in image
     fin.write(decrypted_img)
     fin.close()
