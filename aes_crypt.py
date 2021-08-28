@@ -440,14 +440,14 @@ def image_decryption():
     j = 0
     while(decrypted_img[i]== 0):
         i-=1
-        j+=1
+        j+=1 
 
     decrypted_img = decrypted_img[:padded_img_len-j]
     decrypted_img = bytearray(decrypted_img)
     # opening file for writting purpose
-    out_path = "decrypted_"+path
-    fin = open(out_path, 'wb')
-    # writing encrypted data in image
+    out_path = "decrypted_"+path 
+    fin = open(out_path, 'wb') 
+    # writing encrypted data in image 
     fin.write(decrypted_img)
     fin.close()
     print('Decryption Done...')
